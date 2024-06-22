@@ -18,4 +18,6 @@ class PasswordChanged extends LoginEvent{
   @override
   List<Object> get props => [password];
 }
+class EmailUnfocused extends LoginEvent{}
+class PasswordUnfocused extends LoginEvent{}
 class LoginApi extends LoginEvent{}

@@ -1,22 +1,28 @@
-class User {
-    User({
-        required this.email,
-        required this.password,
-    });
+// The UserModel is designed to represents the user information returned by the 
+// server after login attempt
 
-    final String? email;
-    final String? password;
+class UserModel {
+  UserModel({
+    this.token,
+    this.error,
+    this.email,
+  });
 
-    factory User.fromJson(Map<String, dynamic> json){ 
-        return User(
-            email: json["email"],
-            password: json["password"],
-        );
-    }
+  final String? email;
+  final String? token;
+  final String? error;
 
-    Map<String, dynamic> toJson() => {
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      email: json["email"],
+      token: json["token"],
+      error: json["error"],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
         "email": email,
-        "password": password,
-    };
-
+        "token": token,
+        "error": error,
+      };
 }
