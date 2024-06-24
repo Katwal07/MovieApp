@@ -17,6 +17,8 @@ dependencies:
   flutter_bloc: ^8.1.6
   bloc: ^8.1.4
   equatable: ^2.0.5
+  get_it: ^7.6.7
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:

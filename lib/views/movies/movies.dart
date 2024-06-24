@@ -10,6 +10,10 @@ class MovieView extends StatefulWidget {
 class _MovieScreenState extends State<MovieView> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return  Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 }

@@ -22,6 +22,7 @@ class NetworkApiService implements BaseAPiServices {
     }
   }
 
+  // This method sends a POST request to the specific URLs with the provided data.
   @override
   Future<dynamic> postApi(String url, var data) async {
     if (kDebugMode) {
@@ -29,18 +30,28 @@ class NetworkApiService implements BaseAPiServices {
       print(data);
     }
     try {
+      //  Original Dart object (Map in this case)
+      //   Map<String, String> data = {
+      //       'email': 'user@example.com',
+      //      'password': 'userpassword',
+      //    };
+      // Before sending a POST request with user credentials, 
+      // the data needs to be encoded into JSON format
+      String jsonData = jsonEncode(data);
+
       final response = await http
           .post(
             Uri.parse(url),
             // indicate that the requested body is in json format
             headers: {"Content-Type": "application/json"},
-            // encodes the data into json format
-            body: jsonEncode(data),
+            body: jsonData,
           )
           .timeout(const Duration(seconds: 20));
       if (response.statusCode == 200) {
-        // returns the decoded json response
-        return jsonDecode(response.body);
+        // After receiving the response from the server, 
+        // we need to decode the JSON response to work with it in your application
+        Map<String, dynamic> responseData = jsonDecode(response.body);
+        return responseData;
       }
     } on SocketException {
       throw NoInternetException("");

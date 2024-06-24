@@ -1,15 +1,21 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:movie_app/repository/auth/login_repository.dart';
+import 'package:movie_app/services/session_manager/sesson_controller.dart';
 
 import '../../utils/enums.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
+// {
+//     "email": "eve.holt@reqres.in",
+//     "password": "cityslicka"
+// }
+
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginRepository loginRepository = LoginRepository();
-  LoginBloc() : super(const LoginState()) {
+  LoginRepository loginRepository;
+  LoginBloc({required this.loginRepository}) : super(const LoginState()) {
     on<EmailChanged>(_onEmailChanged);
     on<PasswordChanged>(_onPasswordChanged);
     on<LoginApi>(_loginApi);
@@ -31,25 +37,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     'password': state.password,
   };
 
-  try {
-    final user = await loginRepository.loginApi(data);
-
-    if (user.error != null && user.error!.isNotEmpty) {
+  
+    await loginRepository.loginApi(data).then((value) async{
+      if (value.error!.isNotEmpty) {
       emit(state.copyWith(
-        message: user.error,
+        message: value.error,
         loginStatus: LoginStatus.error,
       ));
     } else {
+      await SessionController().saveUserInPreference(value);
+      await SessionController().getuserFromPreference();
       emit(state.copyWith(
-        message: user.token,
+        message: value.token,
         loginStatus: LoginStatus.success,
       ));
     }
-  } catch (error) {
-    emit(state.copyWith(
-      message: error.toString(),
-      loginStatus: LoginStatus.error,
-    ));
-  }
-}
+    });
+
+    
+  } 
 }

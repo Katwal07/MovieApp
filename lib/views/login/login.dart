@@ -8,7 +8,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  late LoginBloc loginBloc;
+  late LoginBloc _loginBloc;
 
   final emailFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
@@ -16,14 +16,14 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    loginBloc = LoginBloc();
+    _loginBloc = LoginBloc(loginRepository: getIt());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (context) => LoginBloc(),
+        create: (context) => _loginBloc,
         child: Center(
           child: SingleChildScrollView(
             child: SafeArea(
@@ -31,72 +31,16 @@ class _LoginViewState extends State<LoginView> {
                 key: _formKey,
                 child: Column(
                   children: [
+
                     LoginEmailInput(emailFocusNode: emailFocusNode),
+
                     LoginPasswordInput(passwordFocusNode: passwordFocusNode),
+
                     const SizedBox(
                       height: CustomSize.defaultSpace,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .9,
-                      height: 53,
-                      child: BlocListener<LoginBloc, LoginState>(
-                        listenWhen: (previous, current) =>
-                            current.loginStatus != previous.loginStatus,
-                        listener: (context, state) {
-                          if (state.loginStatus == LoginStatus.error) {
-                            ScaffoldMessenger.of(context)
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    state.message.toString(),
-                                  ),
-                                ),
-                              );
-                          }
-
-                          if (state.loginStatus == LoginStatus.success) {
-                            ScaffoldMessenger.of(context)
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    state.message.toString(),
-                                  ),
-                                ),
-                              );
-                          }
-
-                          if (state.loginStatus == LoginStatus.loading) {
-                            ScaffoldMessenger.of(context)
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'submitting...',
-                                  ),
-                                ),
-                              );
-                          }
-                        },
-                        child: BlocBuilder<LoginBloc, LoginState>(
-                          buildWhen: (previous, current) =>
-                              current.loginStatus != previous.loginStatus,
-                          builder: (context, state) {
-                            return CommonButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  context.read<LoginBloc>().add(LoginApi());
-                                }
-                              },
-                              child: state.loginStatus == LoginStatus.loading
-                                  ? const CircularProgressIndicator()
-                                  : const Text('LOGIN'),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                    
+                    LoginButton(formKey: _formKey),
                   ],
                 ),
               ),
@@ -107,3 +51,4 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
